@@ -1,6 +1,7 @@
 extern crate rayon;
 extern crate reqwest;
 extern crate serde_json;
+extern crate imgur;
 
 use serde_json::{Value, Error};
 use rayon::prelude::*;
@@ -47,4 +48,26 @@ fn main() {
             };
         }
     });
+
+    let client_id = std::env::var("CLIENT_ID").unwrap();
+    let imgur = imgur::Handle::new(client_id);
+
+    for img in files {
+        let full_path = format!("./data/{}", img);
+        let data = std::fs::read_to_string(full_path).unwrap();
+        let data = [data.as_bytes()];
+
+        match imgur.upload(file_vec) {
+            Ok(info) => {
+                match info.link() {
+                    Some(link) => println!("Success! Uploaded to {}", link),
+                    None => std::panic("Uploaded, but no link? Wat."),
+                }
+            }
+            Err(e) => {
+                let err = format!("Error uploading: {}", e);
+                std::panic(err);
+            }
+        }
+    }
 }
