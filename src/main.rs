@@ -36,6 +36,8 @@ fn filename(url: &String) -> String {
 }
 
 fn main() {
+    println!("start");
+
     let files = get_img();
 
     files.par_iter().for_each(|url: &String| {
@@ -70,4 +72,6 @@ fn main() {
             }
         }
     }
+
+    println!("done");
 }
