@@ -24,10 +24,25 @@ fn get_img() -> Vec<String> {
     vec
 }
 
+fn get(url: &String) -> String {
+    reqwest::get(url).unwrap().text().unwrap()
+}
+
+fn filename(url: &String) -> String {
+    let idx = url.rfind('/').unwrap() + 1;
+    let slice: String = url.chars().skip(idx).collect();
+    format!("./data/{}", slice)
+}
+
 fn main() {
     let files = get_img();
 
-    for f in files {
-        println!("{}", f);
-    }
+    files.par_iter().for_each(|url: &String| {
+        let file = filename(url);
+        if !std::path::Path::new(file).exists() {
+            println!("Writing {}", file);
+            let body = get(url);
+            std::fs::write(file, body);
+        }
+    });
 }
