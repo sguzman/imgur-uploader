@@ -43,7 +43,7 @@ fn main() {
             let body = get(url);
             match std::fs::write(file, body) {
                 Some(_) => println!("Writing {}", file),
-                None => println!("Oh noez")
+                None => std::panic(format!("Oh noez: {}", url))
             };
         }
     });
