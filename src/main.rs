@@ -39,10 +39,12 @@ fn main() {
 
     files.par_iter().for_each(|url: &String| {
         let file = filename(url);
-        if !std::path::Path::new(file).exists() {
-            println!("Writing {}", file);
+        if !std::path::Path::new(&file).exists() {
             let body = get(url);
-            std::fs::write(file, body);
+            match std::fs::write(file, body) {
+                Some(_) => println!("Writing {}", file),
+                None => println!("Oh noez")
+            };
         }
     });
 }
